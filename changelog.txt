@@ -1,0 +1,14 @@
+AddonPayments Payment Module
+Author: eComm360 S.L.
+Contact: addons@ecomm360.es
+
+-----------------------------------------
+Historic changes for AddonPayments Modules
+-----------------------------------------
+NEXT VERSION PROPOSALS
+
+VERSION 1.0.1
+[+] MO : clickcanarias: Versioning added.
+
+VERSION 1.0.0 
+Project: New Release Compatible wit PrestaShop standards.
