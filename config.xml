@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<module>
+	<name>addonpayments</name>
+	<displayName><![CDATA[AddonPayments Official ]]></displayName>
+	<version><![CDATA[1.0.0]]></version>
+	<description><![CDATA[Este módulo le permite aceptar pagos a través de la forma de pago Addon Payments.]]></description>
+	<author><![CDATA[eComm360 S.L.]]></author>
+	<tab><![CDATA[payments_gateways]]></tab>
+	<is_configurable>1</is_configurable>
+	<need_instance>1</need_instance>
+</module>

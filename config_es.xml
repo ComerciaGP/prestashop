@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<module>
+	<name>addonpayments</name>
+	<displayName><![CDATA[AddonPayments Official ]]></displayName>
+	<version><![CDATA[1.0.0]]></version>
+	<description><![CDATA[Este m&oacute;dulo le permite aceptar pagos a trav&eacute;s de la forma de pago Addon Payments.]]></description>
+	<author><![CDATA[eComm360 S.L.]]></author>
+	<tab><![CDATA[payments_gateways]]></tab>
+	<confirmUninstall><![CDATA[Are you sure you want to uninstall my module?]]></confirmUninstall>
+	<is_configurable>1</is_configurable>
+	<need_instance>0</need_instance>
+	<limited_countries></limited_countries>
+</module>
