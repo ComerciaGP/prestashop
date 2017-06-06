@@ -33,9 +33,9 @@
                 {strip}
                     <label {if $value.value == 1} for="{$input.name}_on"{else} for="{$input.name}_off"{/if}>
                         {if $value.value == 1}
-                            {l s='Automatic' d='Modules.Addonpayments.Shop'}
+                            {l s='Automatic' mod='addonpayments'}
                         {else}
-                            {l s='Manual' d='Modules.Addonpayments.Shop'}
+                            {l s='Manual' mod='addonpayments'}
                         {/if}
                     </label>
                 {/strip}
@@ -49,9 +49,9 @@
                 {strip}
                     <label {if $value.value == 1} for="{$input.name}_on"{else} for="{$input.name}_off"{/if}>
                         {if $value.value == 1}
-                            {l s='Fexco' d='Modules.Addonpayments.Shop'}
+                            {l s='Fexco' mod='addonpayments'}
                         {else}
-                            {l s='Euroconex' d='Modules.Addonpayments.Shop'}
+                            {l s='Euroconex' mod='addonpayments'}
                         {/if}
                     </label>
                 {/strip}
@@ -65,9 +65,9 @@
                 {strip}
                     <label {if $value.value == 1} for="{$input.name}_on"{else} for="{$input.name}_off"{/if}>
                         {if $value.value == 1}
-                            {l s='Real' d='Modules.Addonpayments.Shop'}
+                            {l s='Real' mod='addonpayments'}
                         {else}
-                            {l s='Test' d='Modules.Addonpayments.Shop'}
+                            {l s='Test' mod='addonpayments'}
                         {/if}
                     </label>
                 {/strip}

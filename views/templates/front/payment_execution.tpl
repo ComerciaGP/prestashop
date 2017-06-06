@@ -23,16 +23,16 @@
 *  International Registered Trademark & Property of PrestaShop SA
 *}
 
-{capture name=path}{l s='Order Payment' d='Modules.Addonpayments.Shop'}{/capture}
+{capture name=path}{l s='Order Payment' mod='addonpayments'}{/capture}
 <div>
-    <h3>{l s='Order summary' d='Modules.Addonpayments.Shop'}:</h3>
+    <h3>{l s='Order summary' mod='addonpayments'}:</h3>
 
     {assign var='current_step' value='payment'}
     {include file="$tpl_dir./order-steps.tpl"}
 
     {if $nbProducts <= 0}
         <ul class="alert alert-info">
-            <li>{l s='Your shopping cart is empty.' d='Modules.Addonpayments.Shop'}.</li>
+            <li>{l s='Your shopping cart is empty.' mod='addonpayments'}.</li>
         </ul>
     {else}
         {if isset($error)}
@@ -41,37 +41,37 @@
             </div>
         {/if}
         <p>
-            <strong>{l s='You have chosen to pay by Credit or Debit card.' d='Modules.Addonpayments.Shop'}</strong>
+            <strong>{l s='You have chosen to pay by Credit or Debit card.' mod='addonpayments'}</strong>
         </p>
         <p>
-            {l s='The total amount of your order is' d='Modules.Addonpayments.Shop'}
+            {l s='The total amount of your order is' mod='addonpayments'}
             <span id="amount" class="price">{displayPrice price=$total}</span>
             {if $use_taxes == 1}
-                {l s='(tax incl.)' d='Modules.Addonpayments.Shop'}
+                {l s='(tax incl.)' mod='addonpayments'}
             {/if}
         </p>
         {if $realvault=="1" && $payer_exists=="1"}
             <div class="bloc_registered_card">
-                <h4>{l s='Registered card' d='Modules.Addonpayments.Shop'}</h4>
+                <h4>{l s='Registered card' mod='addonpayments'}</h4>
                 {if !empty($error)} <br/><span class="error">{$error|escape:'htmlall':'UTF-8'}</span><br/><br/>{/if}
                 {if !empty($input_registered)}
                     {$input_registered|escape:'':'UTF-8'}
                 {else}
-                    {l s='No card registered' d='Modules.Addonpayments.Shop'}
+                    {l s='No card registered' mod='addonpayments'}
                 {/if}
             </div>
         {/if}
         <div class="bloc_new_card">
             <form action="{$submit_new|escape:'htmlall':'UTF-8'}" method="post">
-                <h4>{l s='New card' d='Modules.Addonpayments.Shop'}</h4>
-                {l s='Please select your card type' d='Modules.Addonpayments.Shop'}<br/> 
+                <h4>{l s='New card' mod='addonpayments'}</h4>
+                {l s='Please select your card type' mod='addonpayments'}<br/> 
                 {*<select name='ACCOUNT'>
                     {foreach from=$selectAccount item=account}
                         <option value='{$account['account']|escape:'htmlall':'UTF-8'}'>
                             {if $account['card']=="MC"}
-                                {l s='MASTERCARD' d='Modules.Addonpayments.Shop'}
+                                {l s='MASTERCARD' mod='addonpayments'}
                             {elseif $account['card']=="AMEX"}
-                                {l s='AMERICAN EXPRESS' d='Modules.Addonpayments.Shop'}
+                                {l s='AMERICAN EXPRESS' mod='addonpayments'}
                             {else}
                                 {$account['card']|escape:'htmlall':'UTF-8'}
                             {/if}
@@ -82,7 +82,7 @@
             </form>
         </div>
         <div style="padding-top:10px; padding-bottom:10px">
-            <a href="{$link->getPageLink('order', true, NULL, "step=3")|escape:'htmlall':'UTF-8'}" class="button_large">{l s='Other payment methods' d='Modules.Addonpayments.Shop'}</a>
+            <a href="{$link->getPageLink('order', true, NULL, "step=3")|escape:'htmlall':'UTF-8'}" class="button_large">{l s='Other payment methods' mod='addonpayments'}</a>
         </div>
     {/if}
 </div>
