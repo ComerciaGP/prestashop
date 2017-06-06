@@ -46,7 +46,7 @@ $sql[] = 'CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'addonpayments_paymentre
           ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8;';
 
 $sql[] = 'CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'addonpayments_subaccount` (
-            `id_addonpayments_subaccount` INT(10) NULL AUTO_INCREMENT,
+            `id_addonpayments_subaccount` INT(10) NOT NULL AUTO_INCREMENT,
             `name_addonpayments_subaccount` VARCHAR(50) NULL DEFAULT NULL,
             `threeds_addonpayments_subaccount` INT(1) NULL DEFAULT "0",
             `dcc_addonpayments_subaccount` INT(1) NULL DEFAULT "0",

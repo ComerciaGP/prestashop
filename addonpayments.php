@@ -45,7 +45,7 @@ class Addonpayments extends PaymentModule
   {
     $this->name = 'addonpayments';
     $this->tab = 'payments_gateways';
-    $this->version = '1.0.1';
+    $this->version = '1.1.0';
     $this->author = 'eComm360 S.L.';
     $this->need_instance = 0;
     $this->controllers = array('payment', 'validation');
@@ -721,8 +721,8 @@ class Addonpayments extends PaymentModule
             . 'dcc_addonpayments_subaccount, '
             . 'dcc_choice_addonpayments_subaccount, '
             . 'GROUP_CONCAT(addonpayments_card_name) as `cards`  '
-            . 'FROM `prs_addonpayments_subaccount` asb '
-            . 'LEFT JOIN `prs_addonpayments_rel_card` `arc` ON arc.id_addonpayments_subaccount = asb.id_addonpayments_subaccount '
+            . 'FROM `'._DB_PREFIX_.'addonpayments_subaccount` asb '
+            . 'LEFT JOIN `'._DB_PREFIX_.'addonpayments_rel_card` `arc` ON arc.id_addonpayments_subaccount = asb.id_addonpayments_subaccount '
             . 'GROUP BY name_addonpayments_subaccount';
     return Db::getInstance()->executeS($sql);
   }
