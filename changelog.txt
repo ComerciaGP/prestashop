@@ -7,8 +7,5 @@ Historic changes for AddonPayments Modules
 -----------------------------------------
 NEXT VERSION PROPOSALS
 
-VERSION 1.0.1
-[+] MO : clickcanarias: Versioning added.
-
 VERSION 1.0.0 
-Project: New Release Compatible wit PrestaShop standards.
+Project: New Release Compatible wit PrestaShop standards for Version 1.7.

@@ -33,22 +33,22 @@
     <div class="caixabankpayment-content">
         <div class="row">
             <div class="col-md-6">
-                <h5>{l s='This payment module offers the following benefits' mod='addonpayments'}</h5>
+                <h5>{l s='This payment module offers the following benefits' d='Modules.Addonpayments.Shop'}</h5>
                 <dl>
-                    <dt>&middot; {l s='Increase customer payment options' mod='addonpayments'}</dt>
-                    <dd>{l s='Visa®, Mastercard® and more.' mod='addonpayments'}</dd>
+                    <dt>&middot; {l s='Increase customer payment options' d='Modules.Addonpayments.Shop'}</dt>
+                    <dd>{l s='Visa®, Mastercard® and more.' d='Modules.Addonpayments.Shop'}</dd>
 
-                    <dt>&middot; {l s='Help to improve cash flow' mod='addonpayments'}</dt>
-                    <dd>{l s='Receive funds quickly from the bank.' mod='addonpayments'}</dd>
+                    <dt>&middot; {l s='Help to improve cash flow' d='Modules.Addonpayments.Shop'}</dt>
+                    <dd>{l s='Receive funds quickly from the bank.' d='Modules.Addonpayments.Shop'}</dd>
                 </dl>
             </div>
 
             <div class="col-md-6">
-                <h5>{l s='La Caixa® Module' mod='addonpayments'}</h5>
+                <h5>{l s='La Caixa® Module' d='Modules.Addonpayments.Shop'}</h5>
                 <ul>
-                    <li>{l s='Simple, secure and reliable solution to process online payments' mod='addonpayments'}</li>
-                    <li>{l s='Virtual terminal' mod='addonpayments'}</li>
-                    <li>{l s='24/7/365 customer support' mod='addonpayments'}</li>
+                    <li>{l s='Simple, secure and reliable solution to process online payments' d='Modules.Addonpayments.Shop'}</li>
+                    <li>{l s='Virtual terminal' d='Modules.Addonpayments.Shop'}</li>
+                    <li>{l s='24/7/365 customer support' d='Modules.Addonpayments.Shop'}</li>
                 </ul>
                 <br />
             </div>
