@@ -23,16 +23,13 @@
 *  International Registered Trademark & Property of PrestaShop SA
 *}
 
-<!-- Nav tabs -->
-<ul class="nav nav-tabs" role="tablist">
-	<li class="active"><a href="#template_1" role="tab" data-toggle="tab">{l s='Welcome' mod='addonpayments'}</a></li>
-	{*<li><a href="#template_2" role="tab" data-toggle="tab">Template 2</a></li>
-	<li><a href="#template_3" role="tab" data-toggle="tab">Template 3</a></li>*}
-</ul>
-
-<!-- Tab panes -->
-<div class="tab-content">
-	<div class="tab-pane active" id="template_1">{include file='./template_1.tpl'}</div>
-	{*<div class="tab-pane" id="template_2">{include file='./template_2.tpl'}</div>
-	<div class="tab-pane" id="template_3">{include file='./template_3.tpl'}</div>*}
+<div class="row">
+    <div class="col-xs-12 col-md-6">
+        <p class="payment_module" id="addonpayments_payment_button">
+            <a href="{$link->getModuleLink('addonpayments', 'payment', array(), true)|escape:'htmlall':'UTF-8'}" title="{l s='Pay with my payment module' mod='addonpayments'}">
+                <img src="{$module_dir|escape:'htmlall':'UTF-8'}/logo.png" alt="{l s='Pay with my payment module' mod='addonpayments'}" width="32" height="32" />
+                {l s='Pay with my payment module' mod='addonpayments'}
+            </a>
+        </p>
+    </div>
 </div>
