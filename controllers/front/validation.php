@@ -116,7 +116,7 @@ class AddonpaymentsValidationModuleFrontController extends ModuleFrontController
     $this->display_header = false;
     $this->display_column_left = false;
     $this->display_column_right = false;
-    $this->setTemplate('redirect.tpl');
+    $this->setTemplate('module:addonpayments/views/templates/front/redirect.tpl');
   }
 
 }

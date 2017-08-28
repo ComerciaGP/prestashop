@@ -24,19 +24,19 @@
 *}
 
 {if (isset($status) == true) && ($status == 'ok')}
-<h3>{l s='Your order on %s is complete.' sprintf=$shop_name d='Modules.Addonpayments.Shop'}</h3>
-<p>
-	<br />- {l s='Amount' d='Modules.Addonpayments.Shop'} : <span class="price"><strong>{$total|escape:'htmlall':'UTF-8'}</strong></span>
-	<br />- {l s='Reference' d='Modules.Addonpayments.Shop'} : <span class="reference"><strong>{$reference|escape:'html':'UTF-8'}</strong></span>
-	<br /><br />{l s='An email has been sent with this information.' d='Modules.Addonpayments.Shop'}
-	<br /><br />{l s='If you have questions, comments or concerns, please contact our' d='Modules.Addonpayments.Shop'} <a href="{$link->getPageLink('contact', true)|escape:'html':'UTF-8'}">{l s='expert customer support team.' d='Modules.Addonpayments.Shop'}</a>
-</p>
+	<h3>{l s='Your order on %shop_name% is complete.' sprintf=['%shop_name%' => $shop_name] d='Modules.Addonpayments.Shop'}</h3>
+	<p>
+		<br />- {l s='Amount' d='Modules.Addonpayments.Shop'} : <span class="price"><strong>{$total}</strong></span>
+		<br />- {l s='Reference' d='Modules.Addonpayments.Shop'} : <span class="reference"><strong>{$reference}</strong></span>
+		<br /><br />{l s='An email has been sent with this information.' d='Modules.Addonpayments.Shop'}
+		<br /><br />{l s='If you have questions, comments or concerns, please contact our' d='Modules.Addonpayments.Shop'} <a href="{url entity='contact'}">{l s='expert customer support team.' d='Modules.Addonpayments.Shop'}</a>
+	</p>
 {else}
-<h3>{l s='Your order on %s has not been accepted.' sprintf=$shop_name d='Modules.Addonpayments.Shop'}</h3>
-<p>
-	<br />- {l s='Reference' d='Modules.Addonpayments.Shop'} <span class="reference"> <strong>{$reference|escape:'html':'UTF-8'}</strong></span>
-	<br /><br />{l s='Please, try to order again.' d='Modules.Addonpayments.Shop'}
-	<br /><br />{l s='If you have questions, comments or concerns, please contact our' d='Modules.Addonpayments.Shop'} <a href="{$link->getPageLink('contact', true)|escape:'html':'UTF-8'}">{l s='expert customer support team.' d='Modules.Addonpayments.Shop'}</a>
-</p>
+	<h3>{l s='Your order on %shop_name% has not been accepted.' sprintf=['%shop_name%' => $shop_name] d='Modules.Addonpayments.Shop'}</h3>
+	<p>
+		<br />- {l s='Reference' d='Modules.Addonpayments.Shop'} <span class="reference"> <strong>{$reference}</strong></span>
+		<br /><br />{l s='Please, try to order again.' d='Modules.Addonpayments.Shop'}
+		<br /><br />{l s='If you have questions, comments or concerns, please contact our' d='Modules.Addonpayments.Shop'} <a href="{url entity='contact'}">{l s='expert customer support team.' d='Modules.Addonpayments.Shop'}</a>
+	</p>
 {/if}
 <hr />

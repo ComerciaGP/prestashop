@@ -944,24 +944,26 @@ class Addonpayments extends PaymentModule
   /**
    * This hook is used to display the order confirmation page.
    */
-  public function hookPaymentReturn($params)
-  {
-    if ($this->active == false)
-      return;
+    public function hookPaymentReturn($params)
+    {
+        if ($this->active == false)
+            return;
 
-    $order = $params['objOrder'];
+        $order = $params['order'];
+        $cart = $params['cart'];
 
-    if ($order->getCurrentOrderState()->id != Configuration::get('PS_OS_ERROR'))
-      $this->smarty->assign('status', 'ok');
+        if ($order->getCurrentOrderState()->id != Configuration::get('PS_OS_ERROR'))
+            $this->smarty->assign('status', 'ok');
 
-    $this->smarty->assign(array(
-        'id_order' => $order->id,
-        'reference' => $order->reference,
-        'params' => $params,
-        'total' => Tools::displayPrice($params['total_to_pay'], $params['currencyObj'], false),
-    ));
+        $this->smarty->assign(array(
+            'id_order' => $order->id,
+            'reference' => $order->reference,
+            'params' => $params,
+            'shop_name' => Context::getContext()->shop->name,
+            'total' => Tools::displayPrice($cart->getOrderTotal(true, Cart::BOTH), Currency::getCurrencyInstance((int)$cart->id_currency), false),
+        ));
 
-    return $this->display(__FILE__, 'views/templates/hook/confirmation.tpl');
-  }
+        return $this->display(__FILE__, 'views/templates/hook/confirmation.tpl');
+    }
 
 }
