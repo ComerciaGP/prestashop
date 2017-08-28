@@ -7,7 +7,7 @@ Historic changes for AddonPayments Modules
 -----------------------------------------
 NEXT VERSION PROPOSALS
 
-VERSION 1.0.0
+VERSION 1.1.0
 [+] addonpayments: Modifications in order return to solve redirect incompatibility.
 
 VERSION 1.0.0 
