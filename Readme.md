@@ -60,11 +60,12 @@ If you detect any bug feel free to open an issue in the repository or contact us
 
 ## Roadmap
 
-On developement new module features.
+On developement new module extensions.
 
-* iFrame and Lightbox integration.
-* Card Tokenization and Card Vault.
-* Recurring Payment.
+* [iFrame and Lightbox integration.](https://github.com/ComerciaGP/prestashop-modalbox)
+* [Card Tokenization and Card Vault.](https://github.com/ComerciaGP/prestashop-wallet)
+* [Recurring Payment.](https://github.com/ComerciaGP/prestashop-recurring)
+* [Preauthentication](https://github.com/ComerciaGP/prestashop-preauth)
 
 ## License
 
