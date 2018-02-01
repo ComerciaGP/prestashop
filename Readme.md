@@ -13,7 +13,6 @@ Welcome to the AddonPayments Prestashop payment module repository on GitHub. Her
 💱 | **Currency selection.** Various transaction currencies supported.
  | **Easy extension development.** Easy extension development following PrestaShop standards.
 
-
 ## Accounts
 First of all consider obtaining an account to start development.
 
