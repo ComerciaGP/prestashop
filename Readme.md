@@ -9,9 +9,9 @@ Welcome to the AddonPayments Prestashop payment module repository on GitHub. Her
 🔀 | **Connection with AddonPayments PSP.** This module allows PrestaShop shopping cart connection to AddonPayments gateway.
 🔐 | **Redirect.** The module includes configuration to redirected clients to a hosted payment page.
 📊 | **Advanced transaction control.** Cart control on transaction processes and real time order status.
-🔃  | **Payment methods selection.** Various payment methods enabled in transaction checkout.
+🔃 | **Payment methods selection.** Various payment methods enabled in transaction checkout.
 💱 | **Currency selection.** Various transaction currencies supported.
- | **Easy extension development.** Easy extension development following PrestaShop standards.
+✨ | **Easy extension development.** Easy extension development following PrestaShop standards.
 
 ## Accounts
 First of all consider obtaining an account to start development.
