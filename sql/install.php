@@ -51,7 +51,8 @@ $sql[] = 'CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'addonpayments_subaccoun
             `threeds_addonpayments_subaccount` INT(1) NULL DEFAULT "0",
             `dcc_addonpayments_subaccount` INT(1) NULL DEFAULT "0",
             `dcc_choice_addonpayments_subaccount` VARCHAR(50) NULL DEFAULT NULL,
-            PRIMARY KEY (`id_addonpayments_subaccount`)
+            `id_shop` INT(1) NOT NULL DEFAULT "1",
+            PRIMARY KEY (`id_addonpayments_subaccount`,`id_shop`)
           )
           ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8;';
 
@@ -59,6 +60,7 @@ $sql[] = 'CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'addonpayments_rel_card`
             `id_addonpayments_rel_card` INT(10) NOT NULL AUTO_INCREMENT,
             `id_addonpayments_subaccount` INT(10) NOT NULL DEFAULT "0",
             `addonpayments_card_name` VARCHAR(50) NOT NULL DEFAULT "0",
+            `id_shop` int(1) NOT NULL DEFAULT "1",
             PRIMARY KEY (`id_addonpayments_rel_card`)
           )
           ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8;';

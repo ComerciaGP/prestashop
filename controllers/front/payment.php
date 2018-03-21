@@ -54,7 +54,7 @@ class AddonpaymentsPaymentModuleFrontController extends ModuleFrontController
       $infos['settlement'] = ($result['dcc_addonpayments_subaccount'] || $this->module->settlement) ? 1 : 0;
     }
 
-    if (!$customer->is_guest)
+    if ($customer->id != null && !$customer->is_guest)
     {
       $sql = 'SELECT `id_addonpayments_payerref`,`refuser_addonpayments` '
               . 'FROM `' . _DB_PREFIX_ . 'addonpayments_payerref` '
@@ -101,6 +101,8 @@ class AddonpaymentsPaymentModuleFrontController extends ModuleFrontController
   {
     $this->display_column_left = false;
     parent::initContent();
+    $this->context->smarty->assign(array('iframe_url'=>$this->renderIframe()));
+    $this->setTemplate('module:addonpayments/views/templates/front/payment_iframe.tpl');
   }
 
   /**
@@ -117,22 +119,80 @@ class AddonpaymentsPaymentModuleFrontController extends ModuleFrontController
       return 0;
   }
 
+  public function renderIframe()
+    {
+      $addonpay_url = Module::getInstanceByName('addonpayments');
+      $url = $addonpay_url->get_environment_url();
+      $infos = $this->getInfosForm(false);
+      extract($infos, EXTR_OVERWRITE);
+      $ch = curl_init();
+      curl_setopt($ch, CURLOPT_URL, $url);
+      $account = 'internet';
+      $required_info = array(
+        'TIMESTAMP' => $timestamp,
+        'MERCHANT_ID' => $this->module->merchant_id,
+        'AMOUNT' => $this->module->getAmountFormat($cart->getOrderTotal(true, Cart::BOTH)),
+        'ACCOUNT' => $account,
+        'ORDER_ID' => $order_id,
+        'CURRENCY' => $iso_currency,
+        'SHA1HASH' => $sha1_new,
+        'AUTO_SETTLE_FLAG' => $settlement,
+        'COMMENT1' => '',
+        'COMMENT2' => '',
+        'SHIPPING_CODE' => $shipping_postcode,
+        'SHIPPING_CO' => $shipping_co,
+        'BILLING_CODE' => $billing_postcode,
+        'BILLING_CO' => $billing_co,
+        'CUST_NUM' => Context::getContext()->customer->id,
+        'VAR_REF' => Context::getContext()->cart->id,
+        'PROD_ID' => Context::getContext()->cart->id,
+        'HPP_LANG' => Context::getContext()->language->iso_code,
+        'HPP_CUSTOMER_EMAIL' => $customer->email,
+        'HPP_CUSTOMER_FIRSTNAME' => $customer->firstname,
+        'HPP_CUSTOMER_LASTNAME' => $customer->lastname,
+        'MERCHANT_RESPONSE_URL' => $this->context->link->getModuleLink('addonpayments', 'validation'),
+        'HPP_VERSION' => 2,
+        );
+      curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+      curl_setopt($ch, CURLOPT_HEADER, true);
+      curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+      curl_setopt($ch, CURLOPT_AUTOREFERER, true);
+      curl_setopt($ch, CURLOPT_USERAGENT, $_SERVER['HTTP_USER_AGENT']);
+      curl_setopt($ch, CURLOPT_REFERER, Context::getContext()->shop->getBaseURL(true));
+      curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($required_info));
+      $output = curl_exec($ch);
+      if(curl_exec($ch) === false)
+      {
+          echo 'Curl error: ' . curl_error($ch);
+          return 'There was an error, please, contact with the store support';
+      }
+      $iframe_url = curl_getinfo($ch, CURLINFO_EFFECTIVE_URL);
+      curl_close($ch);
+      if ($output !== false) {
+          return $iframe_url;
+      }
+    }
+
   public function postProcess()
   {
-
+    $showIframe = true;
+    if($showIframe)
+    {
+      return;
+    }
     $infos = $this->getInfosForm(false);
     extract($infos, EXTR_OVERWRITE);
     ?>
     <!DOCTYPE HTML>
     <html lang="">
       <head>
-        <script languaje="javascript" >
+        <!--script languaje="javascript" >
 
           function OnLoadEvent() {
             document.form.submit();
           }
 
-        </script>
+        </script-->
       </head>
       <body onLoad="OnLoadEvent()">
         <form name="form" action="<?php echo $this->module->urltpv; ?>" method="POST" class="form">
@@ -163,7 +223,7 @@ class AddonpaymentsPaymentModuleFrontController extends ModuleFrontController
       </body>
     </html>
     <?php
-    exit;
+    //exit;
   }
 
 }

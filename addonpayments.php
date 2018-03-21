@@ -44,12 +44,13 @@ class Addonpayments extends PaymentModule
   public $cvn;
   public $bout_suppr;
   public $liability;
+  public $posible_cards;
 
   public function __construct()
   {
     $this->name = 'addonpayments';
     $this->tab = 'payments_gateways';
-    $this->version = '1.1.0';
+    $this->version = '1.2.0';
     $this->author = 'eComm360 S.L.';
     $this->need_instance = 0;
     $this->controllers = array('payment', 'validation');
@@ -71,16 +72,7 @@ class Addonpayments extends PaymentModule
                 'ADDONPAYMENTS_REDIRECT_LIABILITY')
     );
 
-    $this->env = $config['ADDONPAYMENTS_URLTPV'];
-    switch ($this->env)
-    {
-      case 0: //Test
-        $this->urltpv = 'https://hpp.sandbox.addonpayments.com/pay';
-        break;
-      case 1: //Real
-        $this->urltpv = 'https://hpp.addonpayments.com/pay';
-        break;
-    }
+    $this->urltpv = $this->get_environment_url();
 
     if (isset($config['ADDONPAYMENTS_MERCHANT_ID']))
     {
@@ -106,6 +98,8 @@ class Addonpayments extends PaymentModule
     {
       $this->liability = $config['ADDONPAYMENTS_REDIRECT_LIABILITY'];
     }
+
+    $this->posible_cards = array('visa','_mastercard','maestro','switch','american_express','delta','diners','solo');
 
     parent::__construct();
 
@@ -157,10 +151,10 @@ class Addonpayments extends PaymentModule
             $this->registerHook('header') &&
             $this->registerHook('paymentOptions') &&
             $this->registerHook('paymentReturn') &&
-            Configuration::updateValue('ADDONPAYMENTS_REDIRECT_SETTLEMENT', true) &&
-            Configuration::updateValue('ADDONPAYMENTS_REDIRECT_REALVAULT', '0') &&
-            Configuration::updateValue('ADDONPAYMENTS_REDIRECT_CVN', '0') &&
-            Configuration::updateValue('ADDONPAYMENTS_REDIRECT_LIABILITY', '0');
+            Configuration::updateGlobalValue('ADDONPAYMENTS_REDIRECT_SETTLEMENT', true) &&
+            Configuration::updateGlobalValue('ADDONPAYMENTS_REDIRECT_REALVAULT', '0') &&
+            Configuration::updateGlobalValue('ADDONPAYMENTS_REDIRECT_CVN', '0') &&
+            Configuration::updateGlobalValue('ADDONPAYMENTS_REDIRECT_LIABILITY', '0');
   }
 
   public function uninstall()
@@ -378,15 +372,17 @@ class Addonpayments extends PaymentModule
    */
   protected function getConfigFormValues()
   {
-    return array(
-        'ADDONPAYMENTS_URLTPV' => Configuration::get('ADDONPAYMENTS_URLTPV'),
-        'ADDONPAYMENTS_MERCHANT_ID' => Configuration::get('ADDONPAYMENTS_MERCHANT_ID'),
-        'ADDONPAYMENTS_SHARED_SECRET' => Configuration::get('ADDONPAYMENTS_SHARED_SECRET', null),
-        'ADDONPAYMENTS_REDIRECT_SETTLEMENT' => Configuration::get('ADDONPAYMENTS_REDIRECT_SETTLEMENT'),
-        'ADDONPAYMENTS_REDIRECT_REALVAULT' => Configuration::get('ADDONPAYMENTS_REDIRECT_REALVAULT'),
-        'ADDONPAYMENTS_REDIRECT_CVN' => Configuration::get('ADDONPAYMENTS_REDIRECT_CVN'),
-        'ADDONPAYMENTS_REDIRECT_LIABILITY' => Configuration::get('ADDONPAYMENTS_REDIRECT_LIABILITY'),
+    $config = Configuration::getMultiple(array(
+                'ADDONPAYMENTS_URLTPV',
+                'ADDONPAYMENTS_MERCHANT_ID',
+                'ADDONPAYMENTS_SHARED_SECRET',
+                'ADDONPAYMENTS_REDIRECT_SETTLEMENT',
+                'ADDONPAYMENTS_REDIRECT_SUBACCOUNT',
+                'ADDONPAYMENTS_REDIRECT_REALVAULT',
+                'ADDONPAYMENTS_REDIRECT_CVN',
+                'ADDONPAYMENTS_REDIRECT_LIABILITY')
     );
+    return $config;
   }
 
   /**
@@ -395,10 +391,12 @@ class Addonpayments extends PaymentModule
   protected function postProcess()
   {
     $form_values = $this->getConfigFormValues();
-
+    $html = false;
+    $id_shop_group = Context::getContext()->shop->id_shop_group;
+    $id_shop = Context::getContext()->shop->id;
     foreach (array_keys($form_values) as $key)
     {
-      Configuration::updateValue($key, Tools::getValue($key));
+      Configuration::updateValue($key, Tools::getValue($key), $html, $id_shop_group, $id_shop);
     }
   }
 
@@ -464,7 +462,7 @@ class Addonpayments extends PaymentModule
     $helper->allow_employee_form_lang = Configuration::get('PS_BO_ALLOW_EMPLOYEE_FORM_LANG', 0);
 
     $helper->identifier = $this->identifier;
-    if (Tools::getIsset('updateaddonpayments_subaccount') && !Tools::getValue('updateaddonpayments_subaccount'))
+    if (Tools::getIsset('updateaddonpayments_subaccount'))
     {
       $helper->submit_action = 'submitUpdateSubaccount';
     }
@@ -472,7 +470,7 @@ class Addonpayments extends PaymentModule
     {
       $helper->submit_action = 'submitListAddonpaymentsModule';
     }
-
+    
     $helper->currentIndex = $this->context->link->getAdminLink('AdminModules', false)
             . '&configure=' . $this->name . '&tab_module=' . $this->tab . '&module_name=' . $this->name;
     $helper->token = Tools::getAdminTokenLite('AdminModules');
@@ -482,7 +480,6 @@ class Addonpayments extends PaymentModule
         'languages' => $this->context->controller->getLanguages(),
         'id_language' => $this->context->language->id,
     );
-
     return $helper->generateForm(array($this->getConfigFormList()));
   }
 
@@ -509,48 +506,56 @@ class Addonpayments extends PaymentModule
                 array(
                     'type' => 'checkbox',
                     'label' => $this->l('Cards Type'),
-                    'name' => 'ADDONPAYMENTS_CARD_TYPE[]',
+                    'name' => 'ADDONPAYMENTS_CARD_TYPE',
                     'values' => array(
                         'query' => array(
                             array(
-                                'id' => '',
+                                'id' => 'visa',
                                 'name' => $this->l('Visa'),
-                                'val' => 'VISA'
+                                'val' => '1'
+                                //'val' => 'VISA'
                             ),
                             array(
-                                'id' => '',
+                                'id' => 'mastercard',
                                 'name' => $this->l('MasterCard'),
-                                'val' => 'MC'
+                                'val' => '1'
+                                //'val' => 'MC'
                             ),
                             array(
-                                'id' => '',
+                                'id' => 'maestro',
                                 'name' => $this->l('Maestro'),
-                                'val' => 'MC'
+                                'val' => '1'
+                                //'val' => 'MC'
                             ),
                             array(
-                                'id' => '',
+                                'id' => 'switch',
                                 'name' => $this->l('Switch'),
-                                'val' => 'SWITCH'
+                                'val' => '1'
+                                //'val' => 'SWITCH'
                             ),
                             array(
-                                'id' => '',
+                                'id' => 'american_express',
                                 'name' => $this->l('American Express'),
-                                'val' => 'AMEX'
+                                'val' => '1'
+                                //'val' => 'AMEX'
                             ),
                             array(
-                                'id' => '',
+                                'id' => 'delta',
                                 'name' => $this->l('Delta'),
-                                'val' => 'DELTA'
+                                'val' => '1'
+                                //'val' => 'DELTA'
                             ),
                             array(
-                                'id' => '',
+                                'id' => 'diners',
                                 'name' => $this->l('Diners'),
-                                'val' => 'DINERS'
+                                'val' => '1'
+                                //'val' => 'DINERS'
                             ),
                             array(
-                                'id' => '',
+                                'id' => 'solo',
                                 'name' => $this->l('Solo'),
-                                'val' => 'SOLO'
+                                'val' => '1'
+                                //'val' => 'SOLO'
                             ),
                         ),
                         'id' => 'id',
@@ -636,28 +641,41 @@ class Addonpayments extends PaymentModule
 
     if (!Tools::isSubmit('updateaddonpayments_subaccount'))
     {
+      $cards = array();
+      $fields_form['ADDONPAYMENTS_CARD_TYPE'] = array();
       $fields_form = array(
           'ADDONPAYMENTS_SUBACCOUNT_NAME' => Tools::getValue('ADDONPAYMENTS_SUBACCOUNT_NAME', ''),
-          'ADDONPAYMENTS_CARD_TYPE' => Tools::getValue('ADDONPAYMENTS_CARD_TYPE'),
           'ADDONPAYMENTS_SUBACCOUNT_3DSECURE' => Tools::getValue('ADDONPAYMENTS_SUBACCOUNT_3DSECURE', false),
           'ADDONPAYMENTS_SUBACCOUNT_DCC' => Tools::getValue('ADDONPAYMENTS_SUBACCOUNT_DCC', false),
           'ADDONPAYMENTS_SUBACCOUNT_DCC_CHOICE' => Tools::getValue('ADDONPAYMENTS_SUBACCOUNT_DCC_CHOICE', false),
       );
+      foreach ($this->posible_cards as $card) {
+        if(Tools::getValue('ADDONPAYMENTS_CARD_TYPE_'.$card))
+        {
+          $cards[] = $card;//$card_key;
+          $fields_form['ADDONPAYMENTS_CARD_TYPE_'.$card] = true;
+        }
+      }
+      $fields_form['ADDONPAYMENTS_CARD_TYPE'] = $cards;
     }
     else
     {
-      $fields_saved = $this->getTableAccount(Tools::getValue('id_addonpayments_subaccount'));
+      $fields_saved = $this->getTableAccount((int)Tools::getValue('id_addonpayments_subaccount'));
       $fields_form = array(
-          'ADDONPAYMENTS_SUBACCOUNT_NAME' => $fields_saved['name_addonpayments_subaccount'],
-          'ADDONPAYMENTS_CARD_TYPE' => '',
-          'ADDONPAYMENTS_SUBACCOUNT_3DSECURE' => $fields_saved['threeds_addonpayments_subaccount'],
-          'ADDONPAYMENTS_SUBACCOUNT_DCC' => $fields_saved['dcc_addonpayments_subaccount'],
-          'ADDONPAYMENTS_SUBACCOUNT_DCC_CHOICE' => $fields_saved['dcc_choice_addonpayments_subaccount'],
+          'ADDONPAYMENTS_SUBACCOUNT_NAME' => isset($fields_saved['name_addonpayments_subaccount']) ? $fields_saved['name_addonpayments_subaccount'] : '',
+          'ADDONPAYMENTS_CARD_TYPE' => $fields_saved['cards'],
+          'ADDONPAYMENTS_SUBACCOUNT_3DSECURE' => isset($fields_saved['threeds_addonpayments_subaccount']) ? $fields_saved['threeds_addonpayments_subaccount'] : '',
+          'ADDONPAYMENTS_SUBACCOUNT_DCC' => isset($fields_saved['dcc_addonpayments_subaccount']) ? $fields_saved['dcc_addonpayments_subaccount'] : '',
+          'ADDONPAYMENTS_SUBACCOUNT_DCC_CHOICE' => isset($fields_saved['dcc_choice_addonpayments_subaccount']) ? $fields_saved['dcc_choice_addonpayments_subaccount'] : '',
           'id_addonpayments_subaccount' => Tools::getValue('id_addonpayments_subaccount'),
           'updateSubaccount' => '',
       );
-    }
 
+      if(isset($fields_saved['cards']) && count($fields_saved['cards']))
+      foreach ($fields_saved['cards'] as $field_card) {
+          $fields_form['ADDONPAYMENTS_CARD_TYPE_'.$field_card['addonpayments_card_name']] = true; 
+      }
+    }
     return $fields_form;
   }
 
@@ -667,21 +685,45 @@ class Addonpayments extends PaymentModule
   protected function postProcessList()
   {
     $form_values = $this->getConfigFormListValues();
+    $id_shop = Context::getContext()->shop->id;
+    if(!$id_subaccount = Db::getInstance()->getValue('SELECT id_addonpayments_subaccount FROM '._DB_PREFIX_.'addonpayments_subaccount WHERE `id_shop` = '.$id_shop))
+    {
     if (Db::getInstance()->insert('addonpayments_subaccount', array(
                 'name_addonpayments_subaccount' => pSQL($form_values['ADDONPAYMENTS_SUBACCOUNT_NAME']),
                 'threeds_addonpayments_subaccount' => (int) $form_values['ADDONPAYMENTS_SUBACCOUNT_3DSECURE'],
                 'dcc_addonpayments_subaccount' => (int) $form_values['ADDONPAYMENTS_SUBACCOUNT_DCC'],
                 'dcc_choice_addonpayments_subaccount' => pSQL($form_values['ADDONPAYMENTS_SUBACCOUNT_DCC_CHOICE']),
+                'id_shop' => $id_shop,
             ))
     )
-    {
-      $id_subaccount = Db::getInstance()->Insert_ID();
-      foreach ($form_values['ADDONPAYMENTS_CARD_TYPE'] as $card)
       {
-        Db::getInstance()->insert('addonpayments_rel_card', array(
-            'id_addonpayments_subaccount' => (int) $id_subaccount,
-            'addonpayments_card_name' => pSQL($card)
-        ));
+        $id_subaccount = Db::getInstance()->getValue('SELECT id_addonpayments_subaccount FROM '._DB_PREFIX_.'addonpayments_subaccount WHERE `id_shop` = '.$id_shop);
+        if($form_values['ADDONPAYMENTS_CARD_TYPE'] != false && $form_values['ADDONPAYMENTS_CARD_TYPE'] !== null && count($form_values['ADDONPAYMENTS_CARD_TYPE']))
+        foreach ($form_values['ADDONPAYMENTS_CARD_TYPE'] as $card)
+        {
+          Db::getInstance()->insert('addonpayments_rel_card', array(
+              'id_addonpayments_subaccount' => (int) $id_subaccount,
+              'addonpayments_card_name' => pSQL($card),
+              'id_shop' => $id_shop,
+          ));
+        }
+      }
+    }
+    else
+    {
+      $res = Db::getInstance()->execute('UPDATE ' . _DB_PREFIX_ . 'addonpayments_subaccount SET `name_addonpayments_subaccount` = "'.pSQL($form_values['ADDONPAYMENTS_SUBACCOUNT_NAME']).'", `threeds_addonpayments_subaccount` = '.(int) $form_values['ADDONPAYMENTS_SUBACCOUNT_3DSECURE'].', `dcc_addonpayments_subaccount` = '.(int) $form_values['ADDONPAYMENTS_SUBACCOUNT_DCC'].', `dcc_choice_addonpayments_subaccount` = '.pSQL($form_values['ADDONPAYMENTS_SUBACCOUNT_DCC_CHOICE']).' WHERE id_shop = '.$id_shop);
+      if ($res)
+      {
+        $id_subaccount = Db::getInstance()->getValue('SELECT id_addonpayments_subaccount FROM '._DB_PREFIX_.'addonpayments_subaccount WHERE `id_shop` = '.$id_shop);
+        if($form_values['ADDONPAYMENTS_CARD_TYPE'] != false && $form_values['ADDONPAYMENTS_CARD_TYPE'] !== null && count($form_values['ADDONPAYMENTS_CARD_TYPE']))
+        foreach ($form_values['ADDONPAYMENTS_CARD_TYPE'] as $card)
+        {
+          Db::getInstance()->insert('addonpayments_rel_card', array(
+              'id_addonpayments_subaccount' => (int) $id_subaccount,
+              'addonpayments_card_name' => pSQL($card),
+              'id_shop' => $id_shop,
+          ));
+        }
       }
     }
   }
@@ -696,16 +738,24 @@ class Addonpayments extends PaymentModule
                 'threeds_addonpayments_subaccount' => (int) Tools::getValue('ADDONPAYMENTS_SUBACCOUNT_3DSECURE'),
                 'dcc_addonpayments_subaccount' => (int) Tools::getValue('ADDONPAYMENTS_SUBACCOUNT_DCC'),
                 'dcc_choice_addonpayments_subaccount' => pSQL(Tools::getValue('ADDONPAYMENTS_SUBACCOUNT_DCC_CHOICE')),
-                    ), 'id_addonpayments_subaccount = ' . (int) Tools::getValue('id_addonpayments_subaccount')
+                    ), 'id_addonpayments_subaccount = ' . (int) Tools::getValue('id_addonpayments_subaccount') . ' AND id_shop = ' . Context::getContext()->shop->id
             )
     )
     {
-      Db::getInstance()->delete('addonpayments_rel_card', 'id_addonpayments_subaccount = ' . (int) Tools::getValue('id_addonpayments_subaccount'));
-      foreach (Tools::getValue('ADDONPAYMENTS_CARD_TYPE') as $card)
+      Db::getInstance()->delete('addonpayments_rel_card', 'id_addonpayments_subaccount = ' . (int) Tools::getValue('id_addonpayments_subaccount') . ' AND id_shop = ' . Context::getContext()->shop->id);
+      foreach ($this->posible_cards as $card) {
+        if(Tools::getValue('ADDONPAYMENTS_CARD_TYPE_'.$card))
+        {
+          $cards[] = $card;
+        }
+      }
+      if($cards != false && $cards !== null && count($cards))
+      foreach ($cards as $card)
       {
         Db::getInstance()->insert('addonpayments_rel_card', array(
             'id_addonpayments_subaccount' => (int) Tools::getValue('id_addonpayments_subaccount'),
-            'addonpayments_card_name' => pSQL($card)
+            'addonpayments_card_name' => pSQL($card),
+            'id_shop' => Context::getContext()->shop->id
         ));
       }
     }
@@ -716,8 +766,8 @@ class Addonpayments extends PaymentModule
    */
   protected function postProcessListDelete()
   {
-    Db::getInstance()->delete('addonpayments_subaccount', 'id_addonpayments_subaccount = ' . (int) Tools::getValue('id_addonpayments_subaccount'));
-    Db::getInstance()->delete('addonpayments_rel_card', 'id_addonpayments_subaccount = ' . (int) Tools::getValue('id_addonpayments_subaccount'));
+    Db::getInstance()->delete('addonpayments_subaccount', 'id_addonpayments_subaccount = ' . (int) Tools::getValue('id_addonpayments_subaccount') . ' AND id_shop = ' . Context::getContext()->shop->id);
+    Db::getInstance()->delete('addonpayments_rel_card', 'id_addonpayments_subaccount = ' . (int) Tools::getValue('id_addonpayments_subaccount') . ' AND id_shop = ' . Context::getContext()->shop->id);
   }
 
   /**
@@ -731,13 +781,17 @@ class Addonpayments extends PaymentModule
     {
       $sql = new DbQuery();
       $sql->from('addonpayments_subaccount', 'asb');
-      $sql->leftJoin('addonpayments_rel_card', 'arc', 'arc.id_addonpayments_subaccount = asb.id_addonpayments_subaccount');
-      if ($id_addonpayments_subaccount > 0)
-      {
-        $sql->where('asb.id_addonpayments_subaccount = ' . (int) $id_addonpayments_subaccount);
-        return Db::getInstance()->getRow($sql);
-      }
-      return Db::getInstance()->executeS($sql);
+      $sql->leftJoin('addonpayments_rel_card', 'arc', 'arc.id_addonpayments_subaccount = asb.id_addonpayments_subaccount AND asb.id_shop = arc.id_shop');
+      $sql->where('asb.id_addonpayments_subaccount = ' . (int) $id_addonpayments_subaccount . ' AND asb.id_shop = ' . Context::getContext()->shop->id);
+      $sql2 = new DbQuery();
+      $sql2->select('arc.`addonpayments_card_name`');
+      $sql2->from('addonpayments_subaccount', 'asb');
+      $sql2->leftJoin('addonpayments_rel_card', 'arc', 'arc.id_addonpayments_subaccount = asb.id_addonpayments_subaccount AND asb.id_shop = arc.id_shop');
+      $sql2->where('asb.id_addonpayments_subaccount = ' . (int) $id_addonpayments_subaccount . ' AND asb.id_shop = ' . Context::getContext()->shop->id);
+      $mergesqls = array();
+      $mergesqls = Db::getInstance()->getRow($sql);
+      $mergesqls['cards'] = Db::getInstance()->executeS($sql2);
+      return $mergesqls;
     }
     else
     {
@@ -759,8 +813,9 @@ class Addonpayments extends PaymentModule
             . 'dcc_choice_addonpayments_subaccount, '
             . 'GROUP_CONCAT(addonpayments_card_name) as `cards`  '
             . 'FROM `'._DB_PREFIX_.'addonpayments_subaccount` asb '
-            . 'LEFT JOIN `'._DB_PREFIX_.'addonpayments_rel_card` `arc` ON arc.id_addonpayments_subaccount = asb.id_addonpayments_subaccount '
-            . 'GROUP BY name_addonpayments_subaccount';
+            . 'LEFT JOIN `'._DB_PREFIX_.'addonpayments_rel_card` `arc` ON arc.id_addonpayments_subaccount = asb.id_addonpayments_subaccount AND  asb.id_shop = arc.id_shop '
+            . 'AND asb.id_shop = ' . Context::getContext()->shop->id . ' '
+            . 'WHERE asb.id_shop = '.Context::getContext()->shop->id.' GROUP BY asb.id_shop';
     return Db::getInstance()->executeS($sql);
   }
 
@@ -966,4 +1021,8 @@ class Addonpayments extends PaymentModule
         return $this->display(__FILE__, 'views/templates/hook/confirmation.tpl');
     }
 
+  public function get_environment_url()
+    {
+      return Configuration::get('ADDONPAYMENTS_URLTPV') ? 'https://hpp.addonpayments.com/pay' : 'https://hpp.sandbox.addonpayments.com/pay';
+    }
 }
