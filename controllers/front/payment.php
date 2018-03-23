@@ -127,7 +127,8 @@ class AddonpaymentsPaymentModuleFrontController extends ModuleFrontController
       extract($infos, EXTR_OVERWRITE);
       $ch = curl_init();
       curl_setopt($ch, CURLOPT_URL, $url);
-      $account = 'internet';
+      //$account = 'internet';
+      $account = Db::getInstance()->getValue('SELECT `name_addonpayments_subaccount` FROM '._DB_PREFIX_.'addonpayments_subaccount WHERE id_shop = '.$id_shop);
       $required_info = array(
         'TIMESTAMP' => $timestamp,
         'MERCHANT_ID' => $this->module->merchant_id,
