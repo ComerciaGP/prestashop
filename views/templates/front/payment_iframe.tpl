@@ -24,7 +24,7 @@
 *}
 {extends "$layout"}
 {block name="content"}
-<iframe src="{$iframe_url|escape:'htmlall':'UTF-8'}" width="600" height="568" id="iframerealex" scrolling="no"></iframe>
+<iframe src="{$iframe_url|escape:'htmlall':'UTF-8'}" width="600" height="568" id="iframeaddonpayments" scrolling="no"></iframe>
 <style type="text/css">
 	{literal}div#content-wrapper {text-align: center;}{/literal}
 </style>
