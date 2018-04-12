@@ -102,7 +102,9 @@ class AddonpaymentsPaymentModuleFrontController extends ModuleFrontController
     $this->display_column_left = false;
     parent::initContent();
     $this->context->smarty->assign(array('iframe_url'=>$this->renderIframe()));
-    $this->setTemplate('module:addonpayments/views/templates/front/payment_iframe.tpl');
+    //$this->setTemplate('module:addonpayments/views/templates/front/payment_iframe.tpl');
+    //ddd(__FILE__);
+    return $this->setTemplate('payment_iframe.tpl');
   }
 
   /**
