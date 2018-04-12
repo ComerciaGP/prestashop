@@ -46,7 +46,7 @@ class Addonpayments extends PaymentModule
   {
     $this->name = 'addonpayments';
     $this->tab = 'payments_gateways';
-    $this->version = '1.2.0';
+    $this->version = '1.2.1';
     $this->author = 'eComm360 S.L.';
     $this->need_instance = 0;
     $this->controllers = array('payment', 'validation');

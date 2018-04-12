@@ -7,6 +7,9 @@ Historic changes for AddonPayments Modules
 -----------------------------------------
 NEXT VERSION PROPOSALS
 
+VERSION 1.2.1
+[+] addonpayments: Bug fixed for payment controller, when trying to render the iframe.
+
 VERSION 1.2.0
 [+] addonpayments: Subaccounts added for multistore. Added iframe within the store.
 
