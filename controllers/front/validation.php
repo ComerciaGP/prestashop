@@ -1,5 +1,4 @@
 <?php
-
 /**
  * 2007-2017 PrestaShop
  *
@@ -24,6 +23,9 @@
  *  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  *  International Registered Trademark & Property of PrestaShop SA
  */
+
+require_once(dirname(__FILE__).'/../../classes/AddonPaymentsActions.php');
+
 class AddonpaymentsValidationModuleFrontController extends ModuleFrontController
 {
 
@@ -33,18 +35,14 @@ class AddonpaymentsValidationModuleFrontController extends ModuleFrontController
    */
   public function postProcess()
   {
-    //Note: This resolves as true even if all $_POST values are empty strings
     if (!empty($_POST))
     {
-      /**
-       * If the module is not active anymore, no need to process anything.
-       */
       if ($this->module->active == false)
       {
         die;
       }
 
-      $merchantParameters = Tools::getValue('MERCHANT_ID');
+      //$merchantParameters = Tools::getValue('MERCHANT_ID');
       $signatureRecived = Tools::getValue('SHA1HASH');
       $response = Tools::getValue('RESULT');
       $AUTHCODE = Tools::getValue('AUTHCODE');
@@ -60,13 +58,15 @@ class AddonpaymentsValidationModuleFrontController extends ModuleFrontController
       $orderArray = explode('-', $id_order);
       $id_cart = (int) $orderArray['0'];
       $cart = new Cart($id_cart);
+
+      $hpp_order_id = $id_order;
+
       if (!Validate::isLoadedObject($cart))
       {
         PrestaShopLogger::addLog('AddonPayments::validation - Cart', 3, null, 'Cart', (int) $cart->id_cart, true);
         die('Error loading Cart');
       }
-      $currency = new Currency($cart->id_currency);
-
+      
       $customer = new Customer((int) $cart->id_customer);
       if (!Validate::isLoadedObject($customer))
       {
@@ -84,7 +84,7 @@ class AddonpaymentsValidationModuleFrontController extends ModuleFrontController
 
       if ($signatureRecived === $signatureVerification)
       {
-
+        
         if ($cart->id_customer == 0 || $cart->id_address_delivery == 0 || $cart->id_address_invoice == 0 || !$this->module->active)
         {
           PrestaShopLogger::addLog('AddonPayments::validation - Cart not ok', 3, null, 'Cart', (int) $id_cart, true);
@@ -102,9 +102,52 @@ class AddonpaymentsValidationModuleFrontController extends ModuleFrontController
           $this->module->validateOrder($id_cart, Configuration::get('PS_OS_ERROR'), 0, $this->module->displayName, $this->module->l('error code:') . $response . $message);
         }
 
+        /* SAVE CARD */
+        if ($customer->id) {
+          $tokenization = ($this->module->realvault && !(int)$customer->is_guest) ? true : false;
+          if ($customer->id != null && $tokenization)
+          {
+            $ref_new_payer = Tools::getValue('SAVED_PAYER_REF');
+            $ref_new_payment = Tools::getValue('SAVED_PMT_REF');
+            //$ref_payer = Tools::getValue('PAYER_REF');
+            $ref_payment = Tools::getValue('HPP_CHOSEN_PMT_REF');
+            $existing_payments = false;
+            $user_reference_saved = false;
+            $ref_payment_found = false;
+            $user_reference_saved = AddonPaymentsActions::get_adp_user_reference((int)$customer->id);
+            $user_reference_saved = $user_reference_saved['user_reference'];
+            if (!$user_reference_saved) {
+              AddonPaymentsActions::set_adp_user_reference((int)$customer->id,$ref_new_payer);
+              AddonPaymentsActions::set_adp_user_payment($ref_new_payer,$ref_new_payment);
+            } else {
+              $existing_payments = AddonPaymentsActions::get_adp_user_payments($user_reference_saved);
+              foreach ($existing_payments as $existing_payment) {
+                //var_dump($existing_payment);
+                if ($existing_payment == $ref_payment) {
+                  $ref_payment_found = true;
+                }
+              }
+              if (!$ref_payment_found) {
+                AddonPaymentsActions::set_adp_user_payment($user_reference_saved,$ref_new_payment);
+              }
+            }
+          }
+        }
+        /* SAVE CARD */ 
+        $tmp_order = new Order($this->module->currentOrder);
+        $tmp_currency = new Currency((int)$tmp_order->id_currency);
+        $currency_iso = $tmp_currency->iso_code;
+        if ($this->module->currentOrder) {
+          AddonPaymentsActions::set_adp_order_processed($this->module->currentOrder,$hpp_order_id,$PASREF,$AUTHCODE,$currency_iso);
+        }
+        $redirect_url = _PS_BASE_URL_ . '/index.php?controller=order-confirmation&id_cart=' . $cart->id . '&id_module=' . $this->module->id . '&id_order=' . $this->module->currentOrder . '&key=' . $customer->secure_key;
         $this->context->smarty->assign(array(
-            'REDIRECT_URL' => _PS_BASE_URL_ . '/index.php?controller=order-confirmation&id_cart=' . $cart->id . '&id_module=' . $this->module->id . '&id_order=' . $this->module->currentOrder . '&key=' . $customer->secure_key
+            'REDIRECT_URL' => $redirect_url
         ));
+        echo "<script>window.top.location.href = '".$redirect_url."'</script>";
+        die();
+      } else {
+        die('signature not ok');
       }
     }
   }

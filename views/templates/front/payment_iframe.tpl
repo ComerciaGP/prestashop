@@ -22,8 +22,18 @@
 *  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 *  International Registered Trademark & Property of PrestaShop SA
 *}
-
-<form name="responseform" target="_parent" action="{$REDIRECT_URL|escape:'htmlall':'UTF-8'}" method="POST">
-    <input type=hidden name="RETURN" value="true">
-</form>
-<script> document.responseform.submit();</script>
+{block name="content"}
+<iframe src="{$iframe_url|escape:'htmlall':'UTF-8'}" width="600" height="568" id="iframeaddonpayments" scrolling="no"></iframe>
+<style type="text/css">
+	{literal}div#content-wrapper {text-align: center;}{/literal}
+</style>
+{/block}
+<script>
+    window.addEventListener("message", function (hpp_dimensions) {
+		var jsonvar = JSON.parse(hpp_dimensions.data);
+		var dimensions = JSON.parse(hpp_dimensions.data);
+		if (typeof dimensions.iframe !== 'undefined') {
+			document.getElementById("iframeaddonpayments").style.height = dimensions.iframe.height;
+		}
+	});
+</script>

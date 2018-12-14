@@ -35,7 +35,7 @@ $sql = array();
 $sql[] = 'DROP TABLE IF EXISTS `'._DB_PREFIX_.'addonpayments_payerref`';
 $sql[] = 'DROP TABLE IF EXISTS `'._DB_PREFIX_.'addonpayments_paymentref`';
 $sql[] = 'DROP TABLE IF EXISTS `'._DB_PREFIX_.'addonpayments_subaccount`';
-$sql[] = 'DROP TABLE IF EXISTS `'._DB_PREFIX_.'addonpayments_rel_card`';
+$sql[] = 'DROP TABLE IF EXISTS `'._DB_PREFIX_.'addonpayments_order_processed`';
 
 foreach ($sql as $query) {
     if (Db::getInstance()->execute($query) == false) {

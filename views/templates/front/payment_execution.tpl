@@ -1,5 +1,5 @@
 {*
-* 2007-2017 PrestaShop
+* 2007-2018 PrestaShop
 *
 * NOTICE OF LICENSE
 *
@@ -18,7 +18,7 @@
 * needs please refer to http://www.prestashop.com for more information.
 *
 *  @author    PrestaShop SA <contact@prestashop.com>
-*  @copyright 2007-2017 PrestaShop SA
+*  @copyright 2007-2018 PrestaShop SA
 *  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 *  International Registered Trademark & Property of PrestaShop SA
 *}
@@ -55,7 +55,7 @@
                 <h4>{l s='Registered card' mod='addonpayments'}</h4>
                 {if !empty($error)} <br/><span class="error">{$error|escape:'htmlall':'UTF-8'}</span><br/><br/>{/if}
                 {if !empty($input_registered)}
-                    {$input_registered|escape:'':'UTF-8'}
+                    {$input_registered|escape:'htmlall':'UTF-8'}
                 {else}
                     {l s='No card registered' mod='addonpayments'}
                 {/if}
@@ -64,21 +64,8 @@
         <div class="bloc_new_card">
             <form action="{$submit_new|escape:'htmlall':'UTF-8'}" method="post">
                 <h4>{l s='New card' mod='addonpayments'}</h4>
-                {l s='Please select your card type' mod='addonpayments'}<br/> 
-                {*<select name='ACCOUNT'>
-                    {foreach from=$selectAccount item=account}
-                        <option value='{$account['account']|escape:'htmlall':'UTF-8'}'>
-                            {if $account['card']=="MC"}
-                                {l s='MASTERCARD' mod='addonpayments'}
-                            {elseif $account['card']=="AMEX"}
-                                {l s='AMERICAN EXPRESS' mod='addonpayments'}
-                            {else}
-                                {$account['card']|escape:'htmlall':'UTF-8'}
-                            {/if}
-                        </option>
-                    {/foreach}
-                </select>*}
-                {$input_new|escape:'':'UTF-8'}
+                {l s='Please select your card type' mod='addonpayments'}<br/>
+                {$input_new|escape:'htmlall':'UTF-8'}
             </form>
         </div>
         <div style="padding-top:10px; padding-bottom:10px">

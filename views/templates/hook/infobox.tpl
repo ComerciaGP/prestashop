@@ -17,18 +17,14 @@
 * versions in the future. If you wish to customize PrestaShop for your
 * needs please refer to http://www.prestashop.com for more information.
 *
-*  @author    PrestaShop SA <contact@prestashop.com>
-*  @copyright 2007-2018 PrestaShop SA
-*  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+*  @author PrestaShop SA <contact@prestashop.com>
+*  @copyright  2007-2018 PrestaShop SA
+*  @license    http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 *  International Registered Trademark & Property of PrestaShop SA
 *}
 
-<!-- Nav tabs -->
-<ul class="nav nav-tabs" role="tablist">
-	<li class="active"><a href="#template_1" role="tab" data-toggle="tab">{l s='Welcome' mod='addonpayments'}</a></li>
-</ul>
-
-<!-- Tab panes -->
-<div class="tab-content">
-	<div class="tab-pane active" id="template_1">{include file='./template_1.tpl'}</div>
-</div>
+<section>
+  <p>
+    {l s='After select this payment method you will be redirect to a secure area where you can pay this order.' mod='addonpayments'}
+  </p>
+</section>

@@ -23,7 +23,14 @@
 *  International Registered Trademark & Property of PrestaShop SA
 *}
 
-<form name="responseform" target="_parent" action="{$REDIRECT_URL|escape:'htmlall':'UTF-8'}" method="POST">
-    <input type=hidden name="RETURN" value="true">
-</form>
-<script> document.responseform.submit();</script>
+<div class="col-lg-7">
+	<!-- Nav tabs -->
+	<ul class="nav nav-tabs" role="tablist">
+		<li class="active"><a href="#addons_template_1" role="tab" data-toggle="tab">{l s='Rebate Order' mod='addonpayments'}</a></li>
+	</ul>
+
+	<!-- Tab panes -->
+	<div class="tab-content">
+		<div class="tab-pane active" id="addons_template_1">{include file='./addons_backoffice_template_all_shops.tpl'}</div>
+	</div>
+</div>

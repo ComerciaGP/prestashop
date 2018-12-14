@@ -33,13 +33,9 @@
     <div class="caixabankpayment-content">
         <div class="row">
             <div class="col-md-6">
-                <h5>{l s='This payment module offers the following benefits' mod='addonpayments'}</h5>
-                <dl>
-                    <dt>&middot; {l s='Increase customer payment options' mod='addonpayments'}</dt>
-                    <dd>{l s='Visa®, Mastercard® and more.' mod='addonpayments'}</dd>
-
-                    <dt>&middot; {l s='Help to improve cash flow' mod='addonpayments'}</dt>
-                    <dd>{l s='Receive funds quickly from the bank.' mod='addonpayments'}</dd>
+                <dl class="alert alert-warning">
+                    <dt>&middot; {l s='This payment module have to be configured in a specific shop context' mod='addonpayments'}</dt>
+                    <dt>&middot; {l s='You need to choose a shop to manage the settings.' mod='addonpayments'}</dt>
                 </dl>
             </div>
 

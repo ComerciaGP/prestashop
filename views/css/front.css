@@ -115,3 +115,33 @@ p.payment_module.addonpayments:active {
 #module-addonpayments-payment #center_column .bloc_registered_card .digits{
     padding-top:10px;
 }
+
+iframe#iframeaddonpayments {
+    height: -webkit-fill-available;
+    width: -webkit-fill-available;
+    border: none !important;
+}
+
+iframe#iframeaddonpayments body {
+    background-repeat: none !important;
+}
+
+p.payment_module a.addonpayments {
+    background: url(../img/comercia_logo.png) 15px 12px no-repeat #fbfbfb;
+    background-size: 120px;
+    background-position: 8px center;
+}
+
+p.payment_module a.addonpayments:after {
+    display: block;
+    content: "\f054";
+    position: absolute;
+    right: 15px;
+    margin-top: -11px;
+    top: 50%;
+    font-family: "FontAwesome";
+    font-size: 25px;
+    height: 22px;
+    width: 14px;
+    color: #777;
+}

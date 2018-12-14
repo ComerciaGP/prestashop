@@ -1,5 +1,5 @@
 {*
-* 2007-2017 PrestaShop
+* 2007-2018 PrestaShop
 *
 * NOTICE OF LICENSE
 *
@@ -18,13 +18,27 @@
 * needs please refer to http://www.prestashop.com for more information.
 *
 *  @author    PrestaShop SA <contact@prestashop.com>
-*  @copyright 2007-2017 PrestaShop SA
+*  @copyright 2007-2018 PrestaShop SA
 *  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 *  International Registered Trademark & Property of PrestaShop SA
 *}
 
 <div class="panel">
-	<p class="text-muted">
-		Create your own module's template :)
-	</p>
+    <div class="row caixabankpayment-header">
+        <img src="{$module_dir|escape:'html':'UTF-8'}views/img/addon-payments.png" class="col-xs-12 col-md-4 text-center" id="payment-logo" />
+    </div>
+
+    <hr />
+
+    <div class="caixabankpayment-content">
+        <div class="row">
+            <div class="col-md-6">
+                <form>
+                	<div class="alert alert-warning" role="alert">
+                    	{l s='This order was already rebated.' mod='addonpayments'}
+                	</div>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>

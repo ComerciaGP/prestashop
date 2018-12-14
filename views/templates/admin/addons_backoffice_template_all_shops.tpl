@@ -23,12 +23,22 @@
 *  International Registered Trademark & Property of PrestaShop SA
 *}
 
-<!-- Nav tabs -->
-<ul class="nav nav-tabs" role="tablist">
-	<li class="active"><a href="#template_1" role="tab" data-toggle="tab">{l s='Welcome' mod='addonpayments'}</a></li>
-</ul>
+<div class="panel">
+    <div class="row caixabankpayment-header">
+        <img src="{$module_dir|escape:'html':'UTF-8'}views/img/addon-payments.png" class="col-xs-12 col-md-4 text-center" id="payment-logo" />
+    </div>
 
-<!-- Tab panes -->
-<div class="tab-content">
-	<div class="tab-pane active" id="template_1">{include file='./template_1.tpl'}</div>
+    <hr />
+
+    <div class="caixabankpayment-content">
+        <div class="row">
+            <div class="col-md-6">
+                <form>
+                	<div class="alert alert-warning" role="alert">
+                    	{l s='You must select a shop in the context shop before being able to do a rebate.' mod='addonpayments'}
+                	</div>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>

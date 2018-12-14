@@ -23,25 +23,25 @@
  *  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  *  International Registered Trademark & Property of PrestaShop SA
  */
+
 $sql = array();
 
 $sql[] = 'CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'addonpayments_payerref` (
-            `id_addonpayments_payerref` INT(10) NOT NULL AUTO_INCREMENT,
-            `id_user_addonpayments` INT(10) NULL DEFAULT NULL,
-            `refuser_addonpayments` VARCHAR(50) NULL DEFAULT NULL,
+            `id_customer` INT(10) NOT NULL,
+            `user_reference` VARCHAR(50) NOT NULL UNIQUE,
             `date_add` DATETIME NULL DEFAULT NULL,
-            PRIMARY KEY (`id_addonpayments_payerref`)
+            PRIMARY KEY (`id_customer`)
           )
           ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8;';
 
 $sql[] = 'CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'addonpayments_paymentref` (
-            `id_addonpayments_paymentref` INT(10) NOT NULL AUTO_INCREMENT,
-            `id_addonpayments_payerref` INT(10) NULL DEFAULT NULL,
-            `refpayment_addonpayments` VARCHAR(50) NULL DEFAULT NULL,
+            `id_paymentref` INT(10) NOT NULL AUTO_INCREMENT,
+            `user_reference` VARCHAR(50) NOT NULL,
+            `refpayment` VARCHAR(50) NOT NULL UNIQUE,
             `paymentname_addonpayments` VARCHAR(128) NULL DEFAULT NULL,
             `type_card_addonpayments` VARCHAR(128) NULL DEFAULT NULL,
             `date_add` DATETIME NULL DEFAULT NULL,
-            PRIMARY KEY (`id_addonpayments_paymentref`)
+            PRIMARY KEY (`id_paymentref`)
           )
           ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8;';
 
@@ -51,17 +51,25 @@ $sql[] = 'CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'addonpayments_subaccoun
             `threeds_addonpayments_subaccount` INT(1) NULL DEFAULT "0",
             `dcc_addonpayments_subaccount` INT(1) NULL DEFAULT "0",
             `dcc_choice_addonpayments_subaccount` VARCHAR(50) NULL DEFAULT NULL,
-            PRIMARY KEY (`id_addonpayments_subaccount`)
+            `dcc_active` INT(1) NOT NULL DEFAULT "0",
+            `3d_secured` INT(1) NOT NULL DEFAULT "0",
+            `id_shop` INT(1) NOT NULL DEFAULT "1",
+            PRIMARY KEY (`id_addonpayments_subaccount`,`id_shop`)
           )
           ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8;';
 
-$sql[] = 'CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'addonpayments_rel_card` (
-            `id_addonpayments_rel_card` INT(10) NOT NULL AUTO_INCREMENT,
-            `id_addonpayments_subaccount` INT(10) NOT NULL DEFAULT "0",
-            `addonpayments_card_name` VARCHAR(50) NOT NULL DEFAULT "0",
-            PRIMARY KEY (`id_addonpayments_rel_card`)
+$sql[] = 'CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'addonpayments_order_processed` (
+            `id_order` INT(10) NOT NULL UNIQUE,
+            `HPP_ORDER_ID` VARCHAR(50) NOT NULL UNIQUE,
+            `HPP_PAS_REF` VARCHAR(50) NOT NULL UNIQUE,
+            `HPP_AUTHCODE` VARCHAR(50) NOT NULL DEFAULT "0",
+            `CURRENCY` VARCHAR(50) NOT NULL DEFAULT "EUR",
+            `rebated` INT(10) NOT NULL DEFAULT "0",
+            PRIMARY KEY (`id_order`)
           )
           ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8;';
+
+
 
 foreach ($sql as $query) {
   if (Db::getInstance()->execute($query) == false) {
